@@ -12,9 +12,9 @@ import type { GrowiPageContext } from './src/pageContext';
 
 // ─── グローバル型宣言 ──────────────────────────────────────────────
 declare global {
-  interface Window {
-    pluginActivators?: Record<string, { activate(): void; deactivate(): void }>;
-  }
+    interface Window {
+        pluginActivators?: Record<string, { activate(): void; deactivate(): void }>;
+    }
 }
 
 // package.json の name フィールドと一致させる
@@ -26,12 +26,12 @@ const PLUGIN_NAME = 'growi-plugin-all-seen-users';
  * 閲覧モードではサイドバーにボタンをマウント、編集モードでは非表示にする。
  */
 async function handlePageChange(ctx: GrowiPageContext): Promise<void> {
-  console.log(`[DEBUG ${PLUGIN_NAME}] handlePageChange:`, ctx);
-  if (ctx.mode === 'edit') {
-    unmount();
-    return;
-  }
-  mountOrUpdate(ctx.pageId);
+    console.log(`[DEBUG ${PLUGIN_NAME}] handlePageChange:`, ctx);
+    if (ctx.mode === 'edit') {
+        unmount();
+        return;
+    }
+    mountOrUpdate(ctx.pageId);
 }
 
 // ─── リスナーの生成 ───────────────────────────────────────────────
@@ -39,16 +39,18 @@ const { start, stop } = createPageChangeListener(handlePageChange);
 
 // ─── プラグインライフサイクル ─────────────────────────────────────
 function activate(): void {
-  start();
+    console.log(`[DEBUG ${PLUGIN_NAME}] activate`);
+    start();
 }
 
 function deactivate(): void {
-  stop();
-  unmount();
+    console.log(`[DEBUG ${PLUGIN_NAME}] deactivate`);
+    stop();
+    unmount();
 }
 
 // ─── GROWI への自己登録 ───────────────────────────────────────────
 if (window.pluginActivators == null) {
-  window.pluginActivators = {};
+    window.pluginActivators = {};
 }
 window.pluginActivators[PLUGIN_NAME] = { activate, deactivate };
