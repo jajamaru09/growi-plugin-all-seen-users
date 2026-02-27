@@ -41,16 +41,11 @@ export function SeenUsersButton({ pageId, cssClass }: Props) {
     <>
       <button
         type="button"
-        className={`btn btn-outline-secondary btn-sm rounded-pill ${cssClass ?? ''}`}
+        className={cssClass}
         onClick={handleOpen}
-        title="閲覧者一覧"
       >
-        <span
-          className="material-symbols-outlined"
-          style={{ fontSize: '1rem', verticalAlign: 'middle' }}
-        >
-          group
-        </span>
+        <span className="material-symbols-outlined">group</span>
+        閲覧者一覧
       </button>
       {isOpen && (
         <SeenUsersModal
