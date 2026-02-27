@@ -26,6 +26,7 @@ const PLUGIN_NAME = 'growi-plugin-all-seen-users';
  * 閲覧モードではサイドバーにボタンをマウント、編集モードでは非表示にする。
  */
 async function handlePageChange(ctx: GrowiPageContext): Promise<void> {
+  console.log(`[DEBUG ${PLUGIN_NAME}] handlePageChange:`, ctx);
   if (ctx.mode === 'edit') {
     unmount();
     return;
