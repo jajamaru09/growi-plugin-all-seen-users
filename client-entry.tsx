@@ -25,7 +25,7 @@ const PLUGIN_NAME = 'growi-plugin-all-seen-users';
  * ページが切り替わるたびに呼ばれるコールバック。
  * 閲覧モードではサイドバーにボタンをマウント、編集モードでは非表示にする。
  */
-async function handlePageChange(ctx: GrowiPageContext): Promise<void> {
+function handlePageChange(ctx: GrowiPageContext): void {
     if (ctx.mode === 'edit') {
         unmount();
         return;
