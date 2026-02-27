@@ -39,14 +39,18 @@ export function SeenUsersButton({ pageId, cssClass }: Props) {
 
   return (
     <>
-      <button
-        type="button"
-        className={cssClass}
-        onClick={handleOpen}
-      >
-        <span className="material-symbols-outlined">group</span>
-        閲覧者一覧
-      </button>
+      <div className="d-flex">
+        <button
+          type="button"
+          className={`btn btn-outline-neutral-secondary ${cssClass ?? ''} rounded-pill py-1 px-lg-3`}
+          onClick={handleOpen}
+        >
+          <span className="grw-icon d-flex me-lg-2">
+            <span className="material-symbols-outlined">group</span>
+          </span>
+          <span className="grw-labels d-none d-lg-flex">閲覧者一覧</span>
+        </button>
+      </div>
       {isOpen && (
         <SeenUsersModal
           users={users}
