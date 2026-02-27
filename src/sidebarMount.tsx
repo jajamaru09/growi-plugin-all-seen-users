@@ -19,8 +19,11 @@ let mountEl: HTMLElement | null = null;
  */
 function getContainer(): HTMLElement | null {
   const btn = document.querySelector('[class*="pageListButton"], [class*="page-comment-button"]');
+  console.log('[DEBUG sidebarMount] getContainer btn:', btn, '/ time:', Date.now());
   if (!btn) return null;
-  return (btn.closest('[style*="display: flex"], .d-flex') as HTMLElement) ?? null;
+  const container = (btn.closest('[style*="display: flex"], .d-flex') as HTMLElement) ?? null;
+  console.log('[DEBUG sidebarMount] getContainer container:', container);
+  return container;
 }
 
 /**
