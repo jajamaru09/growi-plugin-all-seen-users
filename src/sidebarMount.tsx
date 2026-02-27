@@ -19,17 +19,8 @@ let mountEl: HTMLElement | null = null;
  */
 function getContainer(): HTMLElement | null {
   const btn = document.querySelector('[class*="pageListButton"], [class*="page-comment-button"]');
-  console.log('[DEBUG sidebarMount] getContainer: btn =', btn);
-  if (!btn) {
-    // ボタンが見つからない場合、サイドバー周辺の DOM を出力して手がかりを得る
-    const sidebar = document.querySelector('[class*="sidebar"], [id*="sidebar"], [class*="Sidebar"]');
-    console.log('[DEBUG sidebarMount] getContainer: sidebar candidate =', sidebar);
-    console.log('[DEBUG sidebarMount] getContainer: sidebar innerHTML =', sidebar?.innerHTML?.slice(0, 500));
-    return null;
-  }
-  const container = (btn.closest('[style*="display: flex"], .d-flex') as HTMLElement) ?? null;
-  console.log('[DEBUG sidebarMount] getContainer: container =', container);
-  return container;
+  if (!btn) return null;
+  return (btn.closest('[style*="display: flex"], .d-flex') as HTMLElement) ?? null;
 }
 
 /**
@@ -50,22 +41,17 @@ function getCssModuleClass(): string {
 function ensureMount(): { root: Root; el: HTMLElement } | null {
   // 既存のマウントポイントが DOM 上にあればそのまま使う
   if (root && mountEl && document.body.contains(mountEl)) {
-    console.log('[DEBUG sidebarMount] ensureMount: reusing existing mount');
     return { root, el: mountEl };
   }
   // 消えていた場合は再生成
   const container = getContainer();
-  if (!container) {
-    console.warn('[DEBUG sidebarMount] ensureMount: container not found, cannot mount');
-    return null;
-  }
+  if (!container) return null;
 
   const el = document.createElement('div');
   el.id = MOUNT_ID;
   container.appendChild(el);
   mountEl = el;
   root = createRoot(el);
-  console.log('[DEBUG sidebarMount] ensureMount: mounted to', container);
   return { root, el };
 }
 
@@ -75,11 +61,9 @@ function ensureMount(): { root: Root; el: HTMLElement } | null {
  * @param pageId - 現在閲覧中のページ ID（例: /6995d3fcf17c96c558f6b0ab）
  */
 export function mountOrUpdate(pageId: string): void {
-  console.log('[DEBUG sidebarMount] mountOrUpdate called, pageId =', pageId);
   const mount = ensureMount();
   if (!mount) return;
   const cssClass = getCssModuleClass();
-  console.log('[DEBUG sidebarMount] mountOrUpdate: cssClass =', cssClass);
   mount.root.render(<SeenUsersButton pageId={pageId} cssClass={cssClass} />);
 }
 

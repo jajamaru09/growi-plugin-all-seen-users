@@ -100,32 +100,20 @@ export function createPageChangeListener(callback: PageChangeCallback): {
     function start(): void {
         const nav = (window as any).navigation;
         // Navigation API 非対応ブラウザ（Firefox など）では何もしない
-        console.log('[DEBUG growiNavigation] start(): nav =', nav);
-        if (!nav) {
-            console.warn('[DEBUG growiNavigation] start(): Navigation API not available');
-            return;
-        }
+        if (!nav) return;
         // 複数回 start() を呼ばれても二重登録しないようフラグで管理する
-        // NOTE: _growiPluginListening は他プラグインと共有されるため衝突する可能性がある
-        console.log('[DEBUG growiNavigation] start(): _growiPluginListening =', nav._growiPluginListening);
-        if (nav._growiPluginListening) {
-            console.warn('[DEBUG growiNavigation] start(): early return — flag already set by another plugin');
-            return;
-        }
-        nav._growiPluginListening = true;
+        // プラグイン固有の名前にして他プラグインとの衝突を避ける
+        if (nav._growiPluginListening_allSeenUsers) return;
+        nav._growiPluginListening_allSeenUsers = true;
         nav.addEventListener('navigate', onNavigate);
 
         // navigate イベントは初回ページロード時には発火しないため、
         // 現在のURLを参照して初回のコールバックを手動で発火する
         const { pathname, hash } = location;
-        console.log('[DEBUG growiNavigation] start(): pathname =', pathname, '/ hash =', hash);
         const pageId = extractPageId(pathname);
-        console.log('[DEBUG growiNavigation] start(): extractPageId =', pageId);
         if (pageId) {
             const revisionId = new URL(location.href).searchParams.get('revisionId') ?? undefined;
             tryFire(pageId, hashToMode(hash), revisionId);
-        } else {
-            console.warn('[DEBUG growiNavigation] start(): pathname did not match pageId pattern — handlePageChange will NOT fire on initial load');
         }
     }
 
@@ -136,7 +124,7 @@ export function createPageChangeListener(callback: PageChangeCallback): {
     function stop(): void {
         const nav = (window as any).navigation;
         nav?.removeEventListener('navigate', onNavigate);
-        nav && delete nav._growiPluginListening;
+        nav && delete nav._growiPluginListening_allSeenUsers;
         lastKey = null;
     }
 
