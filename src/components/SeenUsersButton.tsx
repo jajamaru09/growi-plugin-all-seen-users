@@ -3,7 +3,7 @@
  */
 
 import { useState, useEffect, useCallback } from 'react';
-import { fetchSeenUsers, type SeenUserInfo } from '../growiApi';
+import { fetchSeenUsers, fetchPageIdByPath, type SeenUserInfo } from '../growiApi';
 import { SeenUsersModal } from './SeenUsersModal';
 
 interface Props {
@@ -17,10 +17,12 @@ export function SeenUsersButton({ pageId, cssClass }: Props) {
   const [users, setUsers] = useState<SeenUserInfo[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [resolvedPageId, setResolvedPageId] = useState(pageId);
 
-  // ページが変わったらモーダルを閉じる
+  // ページが変わったらモーダルを閉じ、resolvedPageId を更新
   useEffect(() => {
     setIsOpen(false);
+    setResolvedPageId(pageId);
   }, [pageId]);
 
   const handleOpen = useCallback(async () => {
@@ -28,7 +30,12 @@ export function SeenUsersButton({ pageId, cssClass }: Props) {
     setLoading(true);
     setError(null);
     try {
-      const result = await fetchSeenUsers(pageId);
+      let targetPageId = pageId;
+      if (!pageId || pageId === '/') {
+        targetPageId = await fetchPageIdByPath('/');
+        setResolvedPageId(targetPageId);
+      }
+      const result = await fetchSeenUsers(targetPageId);
       setUsers(result);
     } catch {
       setError('データの取得に失敗しました');

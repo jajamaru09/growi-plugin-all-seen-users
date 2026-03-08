@@ -4,6 +4,23 @@
  * 閲覧中ページの seenUsers を取得し、ユーザー情報と合わせて返す。
  */
 
+interface PageResponse {
+  page: { _id: string };
+}
+
+/**
+ * パスからページIDを取得する。
+ * ルートページ（/）など、URLにpageIdが含まれない場合に使用する。
+ */
+export async function fetchPageIdByPath(path: string): Promise<string> {
+  const res = await fetch(`/_api/v3/page/?path=${encodeURIComponent(path)}`);
+  if (!res.ok) {
+    throw new Error(`ページ情報の取得に失敗しました: ${res.status}`);
+  }
+  const data: PageResponse = await res.json();
+  return data.page._id;
+}
+
 export interface SeenUserInfo {
   id: string;
   name: string;
