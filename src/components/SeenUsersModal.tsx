@@ -2,7 +2,7 @@
  * SeenUsersModal.tsx — 閲覧者一覧モーダルコンポーネント
  */
 
-import { useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { createPortal } from 'react-dom';
 import type { SeenUserInfo } from '../growiApi';
 
@@ -10,10 +10,20 @@ interface Props {
   users: SeenUserInfo[];
   loading: boolean;
   error: string | null;
+  revisionId: string | null;
   onClose: () => void;
 }
 
-export function SeenUsersModal({ users, loading, error, onClose }: Props) {
+export function SeenUsersModal({ users, loading, error, revisionId, onClose }: Props) {
+  const [copied, setCopied] = useState(false);
+
+  const handleCopy = useCallback(() => {
+    if (!revisionId) return;
+    navigator.clipboard.writeText(revisionId).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    });
+  }, [revisionId]);
   // Escape キーで閉じる
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose(); };
@@ -31,7 +41,25 @@ export function SeenUsersModal({ users, loading, error, onClose }: Props) {
       <div className="modal-dialog" onClick={e => e.stopPropagation()}>
         <div className="modal-content">
           <div className="modal-header">
-            <h5 className="modal-title">閲覧者一覧</h5>
+            <h5 className="modal-title d-flex align-items-center gap-2">
+              閲覧者一覧
+              {revisionId && (
+                <span
+                  style={{ fontSize: '0.75rem', color: '#888', fontFamily: 'monospace' }}
+                >
+                  Rev: {revisionId.slice(-8)}
+                  <button
+                    type="button"
+                    className="btn btn-sm btn-outline-secondary ms-1 py-0 px-1"
+                    style={{ fontSize: '0.7rem', lineHeight: 1.2 }}
+                    onClick={handleCopy}
+                    title="Revision IDをコピー"
+                  >
+                    {copied ? '✓' : 'Copy'}
+                  </button>
+                </span>
+              )}
+            </h5>
             <button type="button" className="btn-close" onClick={onClose} aria-label="閉じる" />
           </div>
           <div className="modal-body">

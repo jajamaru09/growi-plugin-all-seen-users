@@ -4,15 +4,6 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { fetchSeenUsers, fetchPageIdByPath, type SeenUserInfo } from '../growiApi';
-
-const revisionIdStyle: React.CSSProperties = {
-  fontSize: '0.75rem',
-  color: '#888',
-  fontFamily: 'monospace',
-  userSelect: 'all',
-  marginLeft: '0.5rem',
-  alignSelf: 'center',
-};
 import { SeenUsersModal } from './SeenUsersModal';
 
 interface Props {
@@ -57,7 +48,7 @@ export function SeenUsersButton({ pageId, cssClass }: Props) {
 
   return (
     <>
-      <div className="d-flex align-items-center">
+      <div className="d-flex">
         <button
           type="button"
           className={`btn btn-outline-neutral-secondary ${cssClass ?? ''} rounded-pill py-1 px-lg-3`}
@@ -68,17 +59,13 @@ export function SeenUsersButton({ pageId, cssClass }: Props) {
           </span>
           <span className="grw-labels d-none d-lg-flex">閲覧者一覧</span>
         </button>
-        {revisionId && (
-          <span style={revisionIdStyle} title={`Revision ID: ${revisionId}`}>
-            Rev: {revisionId.slice(-8)}
-          </span>
-        )}
       </div>
       {isOpen && (
         <SeenUsersModal
           users={users}
           loading={loading}
           error={error}
+          revisionId={revisionId}
           onClose={() => setIsOpen(false)}
         />
       )}
