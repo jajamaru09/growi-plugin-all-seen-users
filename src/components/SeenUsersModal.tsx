@@ -19,10 +19,25 @@ export function SeenUsersModal({ users, loading, error, revisionId, onClose }: P
 
   const handleCopy = useCallback(() => {
     if (!revisionId) return;
-    navigator.clipboard.writeText(revisionId).then(() => {
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(revisionId).then(() => {
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000);
+      });
+    } else {
+      // HTTP環境など非セキュアコンテキストのフォールバック
+      const ta = document.createElement('textarea');
+      ta.value = revisionId;
+      ta.style.position = 'fixed';
+      ta.style.opacity = '0';
+      document.body.appendChild(ta);
+      ta.focus();
+      ta.select();
+      document.execCommand('copy');
+      document.body.removeChild(ta);
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
-    });
+    }
   }, [revisionId]);
   // Escape キーで閉じる
   useEffect(() => {
